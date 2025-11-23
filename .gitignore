@@ -1,0 +1,60 @@
+# Node.js
+node_modules/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Dependency directories
+/.pnp.cjs
+.pnp.js
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Build outputs
+dist/
+build/
+
+# Runtime
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Optional npm cache
+.npm
+
+# dotenv environment variables
+.env
+.env.*.local
+
+# Uploads / user generated content
+uploads/
+
+# IDEs and editors
+.vscode/
+.idea/
+.history/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary
+tmp/
+temp/
+
+# Misc
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Mac/Windows specific
+ehthumbs.db
+Icon?
