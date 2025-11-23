@@ -56,50 +56,6 @@ A robust RESTful API for the FrostByte blogging platform, built for developers a
   - Request/response examples
   - Try-it-out functionality
 
-## Project Structure
-```
-IT4C-Labs-robusterrorhandling/
-├── src/
-│   ├── config/
-│   │   ├── db.js              # Database connection
-│   │   ├── index.js           # Environment configuration
-│   │   └── swagger.js         # Swagger/OpenAPI setup
-│   ├── controllers/
-│   │   ├── auth.controller.js
-│   │   ├── comment.controller.js
-│   │   ├── photo.controller.js
-│   │   ├── post.controller.js
-│   │   └── user.controller.js
-│   ├── middlewares/
-│   │   ├── auth.middleware.js
-│   │   ├── errorHandler.middleware.js
-│   │   ├── multer.middleware.js
-│   │   ├── rateLimiter.middleware.js
-│   │   └── validator.middleware.js
-│   ├── routes/
-│   │   ├── index.js           # Route aggregator
-│   │   ├── auth.routes.js
-│   │   ├── comment.routes.js
-│   │   ├── photo.routes.js
-│   │   ├── post.routes.js
-│   │   └── user.routes.js
-│   ├── services/
-│   │   ├── comment.service.js
-│   │   ├── photo.service.js
-│   │   ├── post.service.js
-│   │   └── user.service.js
-│   └── utils/
-│       ├── ApiError.js
-│       ├── ApiResponse.js
-│       └── asyncHandler.js
-├── uploads/                   # Uploaded files directory
-├── .env                       # Environment variables
-├── index.js                   # Application entry point
-└── package.json
-```
-
-## Installation
-
 ### Prerequisites
 
 - Node.js (v14 or higher)
@@ -111,7 +67,6 @@ IT4C-Labs-robusterrorhandling/
 1. **Clone the repository**
 ```bash
    git clone https://github.com/DrFrostyyy/Blog-Backend
-   cd IT4C-Labs-robusterrorhandling
 ```
 
 2. **Install dependencies**
@@ -312,6 +267,6 @@ curl -X POST http://localhost:3000/api/v1/auth/login \
 
 This is a personal project. Contributions are not currently accepted.
 
-## 📧 Support
+## Support
 
 For questions or issues, please refer to the API documentation at `/api-docs` or contact the author.
