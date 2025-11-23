@@ -1,66 +1,317 @@
+# FrostByte API - Backend
 
-## Author: Jana Erika Cornejo, IT4C
-This repository, maintained on the feature/production-ready branch, serves as the final project for IT4C, focusing on implementing critical security hardening measures and architectural patterns in a 
-modern Node.js/Express application.
+A robust RESTful API for the FrostByte blogging platform, built for developers and tech enthusiasts.
 
-### Focus Areas:
-This project demonstrates the successful implementation of several key production-ready features:
+## Tech Stack
 
-Security Hardening: Implementation of essential security headers and middleware, including CORS configuration and preparation for HTTPS deployment.
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Database:** MySQL
+- **Authentication:** JWT (JSON Web Tokens)
+- **Password Hashing:** bcrypt
+- **Validation:** express-validator
+- **Documentation:** Swagger/OpenAPI
+- **File Upload:** Multer
 
-Rate Limiting: Protecting API endpoints against brute-force attacks and abuse using robust rate limiting middleware.
+## Features
 
-API Versioning: Structuring the API to support multiple versions (e.g., /api/v1/) to ensure backward compatibility and smooth future updates.
+- **Authentication & Authorization**
+  - User registration with password hashing
+  - JWT-based authentication
+  - Protected routes with middleware
+  - Ownership verification for resources
 
-Comprehensive Documentation: Utilizing Swagger/OpenAPI to automatically generate and host interactive documentation for all API routes.
+- **Blog Post Management**
+  - Full CRUD operations
+  - Author information with posts
+  - Post ownership validation
+  - Pagination-ready structure
 
-Features & Architecture: The application is built on the principle of Separation of Concerns.
+- **Comment System**
+  - Add comments to posts
+  - Author attribution
+  - Nested comment structure support
 
-Express.js Backend: A fast and minimalist web framework for Node.js.
+- **User Profiles**
+  - User information management
+  - View user's posts
+  - Profile statistics
 
-Security Middleware: Utilizing helmet and custom middleware for enhanced security.
+- **Photo Uploads**
+  - Image upload with Multer
+  - File path storage in database
+  - Physical file management
+  - User-owned photo galleries
 
-File Upload Handling: Integrated functionality for secure file uploads.
+- **Security Features**
+  - Helmet for secure HTTP headers
+  - CORS configuration
+  - Rate limiting (global and auth-specific)
+  - Input validation and sanitization
+  - SQL injection prevention with parameterized queries
 
-Environment Configuration: Use of .env files for managing sensitive configuration variables.
+- **API Documentation**
+  - Interactive Swagger UI
+  - Comprehensive endpoint documentation
+  - Request/response examples
+  - Try-it-out functionality
 
-In-Memory Data Store: Simple data persistence for lab exercises (can be easily swapped for a database).
+## Project Structure
+```
+IT4C-Labs-robusterrorhandling/
+├── src/
+│   ├── config/
+│   │   ├── db.js              # Database connection
+│   │   ├── index.js           # Environment configuration
+│   │   └── swagger.js         # Swagger/OpenAPI setup
+│   ├── controllers/
+│   │   ├── auth.controller.js
+│   │   ├── comment.controller.js
+│   │   ├── photo.controller.js
+│   │   ├── post.controller.js
+│   │   └── user.controller.js
+│   ├── middlewares/
+│   │   ├── auth.middleware.js
+│   │   ├── errorHandler.middleware.js
+│   │   ├── multer.middleware.js
+│   │   ├── rateLimiter.middleware.js
+│   │   └── validator.middleware.js
+│   ├── routes/
+│   │   ├── index.js           # Route aggregator
+│   │   ├── auth.routes.js
+│   │   ├── comment.routes.js
+│   │   ├── photo.routes.js
+│   │   ├── post.routes.js
+│   │   └── user.routes.js
+│   ├── services/
+│   │   ├── comment.service.js
+│   │   ├── photo.service.js
+│   │   ├── post.service.js
+│   │   └── user.service.js
+│   └── utils/
+│       ├── ApiError.js
+│       ├── ApiResponse.js
+│       └── asyncHandler.js
+├── uploads/                   # Uploaded files directory
+├── .env                       # Environment variables
+├── index.js                   # Application entry point
+└── package.json
+```
 
-## Technology Stack
-Runtime: Node.js
+## Installation
 
-Framework: Express.js
+### Prerequisites
 
-Documentation: Swagger/OpenAPI
+- Node.js (v14 or higher)
+- MySQL (v8 or higher)
+- npm or yarn
 
-Security: Helmet, CORS Middleware
+### Setup Steps
 
-Utilities: dotenv, express-rate-limit
+1. **Clone the repository**
+```bash
+   git clone https://github.com/DrFrostyyy/Blog-Backend
+   cd IT4C-Labs-robusterrorhandling
+```
 
-## Getting Started
-Prerequisites:
+2. **Install dependencies**
+```bash
+   npm install
+```
 
-Node.js
+3. **Set up environment variables**
+   
+   Create a `.env` file in the root directory:
+```env
+   NODE_ENV=development
+   PORT=3000
+   
+   # Database Configuration
+   DB_HOST=localhost
+   DB_USER=root
+   DB_PASSWORD=your_password
+   DB_DATABASE=blogdatabase
+   
+   # JWT Secret
+   JWT_SECRET=change-this-bro
+   
+   # Frontend URL (for CORS)
+   FRONTEND_URL=http://localhost:5173
+```
 
-npm or yarn
+4. **Set up the database**
+   
+   Create the database and tables:
+```sql
+   CREATE DATABASE blogdatabase;
+   USE blogdatabase;
+   
+   -- Users table
+   CREATE TABLE users (
+     id INT PRIMARY KEY AUTO_INCREMENT,
+     username VARCHAR(255) NOT NULL UNIQUE,
+     email VARCHAR(255) NOT NULL UNIQUE,
+     password VARCHAR(255) NOT NULL,
+     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+   );
+   
+   -- Posts table
+   CREATE TABLE posts (
+     id INT PRIMARY KEY AUTO_INCREMENT,
+     title VARCHAR(255) NOT NULL,
+     content TEXT NOT NULL,
+     authorId INT NOT NULL,
+     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     FOREIGN KEY (authorId) REFERENCES users(id) ON DELETE CASCADE
+   );
+   
+   -- Comments table
+   CREATE TABLE comments (
+     id INT PRIMARY KEY AUTO_INCREMENT,
+     text TEXT NOT NULL,
+     postId INT NOT NULL,
+     authorId INT NOT NULL,
+     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     FOREIGN KEY (postId) REFERENCES posts(id) ON DELETE CASCADE,
+     FOREIGN KEY (authorId) REFERENCES users(id) ON DELETE CASCADE
+   );
+   
+   -- Photos table
+   CREATE TABLE photos (
+     id INT PRIMARY KEY AUTO_INCREMENT,
+     caption VARCHAR(255),
+     filePath VARCHAR(255) NOT NULL,
+     userId INT NOT NULL,
+     createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+     FOREIGN KEY (userId) REFERENCES users(id) ON DELETE CASCADE
+   );
+```
 
-## Install dependencies:
+5. **Create uploads directory**
+```bash
+   mkdir uploads
+```
 
-npm install
-# or yarn install
+6. **Start the server**
+```bash
+   npm start
+   # or for development with nodemon
+   npm run dev
+```
 
-## Configure Environment:
-Create a .env file in the root directory and add necessary configuration variables (e.g., PORT, RATE_LIMIT_MAX).
+The server will start on `http://localhost:3000`
 
-## Running the Application
-Start the server:
+## API Documentation
 
-npm start
-The API server will typically run on http://localhost:3000 (or the port specified in your .env file).
+Once the server is running, access the interactive API documentation at:
+```
+http://localhost:3000/api-docs
+```
 
-API Documentation (Swagger UI)
-Once the server is running, the interactive API documentation is accessible at:
+## API Endpoints
 
-http://localhost:[PORT]/api-docs
+### Authentication
+- `POST /api/v1/auth/register` - Register new user
+- `POST /api/v1/auth/login` - Login user
 
-This interface allows users and developers to explore, test, and understand all available API endpoints, including versioned routes (/api/v1/).
+### Posts
+- `GET /api/v1/posts` - Get all posts
+- `GET /api/v1/posts/:id` - Get post by ID
+- `POST /api/v1/posts` - Create post (auth required)
+- `PUT /api/v1/posts/:id` - Update post (auth + ownership required)
+- `PATCH /api/v1/posts/:id` - Partially update post (auth required)
+- `DELETE /api/v1/posts/:id` - Delete post (auth + ownership required)
+
+### Comments
+- `GET /api/v1/comments` - Get all comments
+- `GET /api/v1/comments/posts/:postId/comments` - Get comments for a post
+- `POST /api/v1/comments/posts/:postId/comments` - Create comment (auth required)
+
+### Users
+- `GET /api/v1/users` - Get all users
+- `GET /api/v1/users/:id` - Get user by ID
+- `GET /api/v1/users/:userId/posts` - Get user's posts
+
+### Photos
+- `GET /api/v1/photos` - Get user's photos (auth required)
+- `POST /api/v1/photos/upload` - Upload photo (auth required)
+- `DELETE /api/v1/photos/:id` - Delete photo (auth + ownership required)
+
+## Security Features
+
+### Rate Limiting
+- **Global:** 100 requests per 15 minutes
+- **Authentication:** 5 attempts per 15 minutes
+
+### Authentication
+All protected routes require a Bearer token in the Authorization header:
+```
+Authorization: Bearer <your-jwt-token>
+```
+
+### CORS
+Configured to accept requests only from the specified frontend URL.
+
+### Input Validation
+All inputs are validated using express-validator before processing.
+
+## Testing
+
+Test the API using:
+- **Swagger UI:** `http://localhost:3000/api-docs`
+- **Postman:** Import the collection from Swagger
+- **cURL:** Command-line testing
+
+Example request:
+```bash
+curl -X POST http://localhost:3000/api/v1/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"password123"}'
+```
+
+## Dependencies
+
+### Core
+- `express` - Web framework
+- `mysql2` - MySQL driver with promise support
+- `bcrypt` - Password hashing
+- `jsonwebtoken` - JWT authentication
+- `dotenv` - Environment variables
+
+### Middleware
+- `helmet` - Security headers
+- `cors` - Cross-origin resource sharing
+- `express-rate-limit` - Rate limiting
+- `express-validator` - Input validation
+- `multer` - File upload handling
+
+### Documentation
+- `swagger-jsdoc` - Generate Swagger spec from JSDoc
+- `swagger-ui-express` - Serve Swagger UI
+
+## Architecture
+
+### Design Patterns
+- **MVC Pattern:** Separation of routes, controllers, and services
+- **Service Layer:** Business logic isolated from HTTP concerns
+- **Middleware Chain:** Reusable request/response processors
+- **Repository Pattern:** Data access abstraction via services
+
+### Key Principles
+- **Separation of Concerns:** Each layer has a single responsibility
+- **DRY (Don't Repeat Yourself):** Reusable utilities and middleware
+- **Security First:** Multiple layers of security measures
+- **Error Handling:** Centralized error handler with consistent responses
+
+## Author
+
+**Jana Cornejo**
+- Program: Information Technology
+
+## Contributing
+
+This is a personal project. Contributions are not currently accepted.
+
+## 📧 Support
+
+For questions or issues, please refer to the API documentation at `/api-docs` or contact the author.
